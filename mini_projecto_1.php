@@ -53,13 +53,38 @@
 // - devolver o saldo numa determinada data
 // - extracto de conta
 
-function createAccount(float $balance, string $holder, string $type): array {
-    $initialtransaction = null;
-    return array(
+function createAccount(float $ceiling, string $holder, string $acctType,float $balance = 0.0): array {
+    $accountArry = array(
+    
         'balance' => $balance,
         'holder' => $holder,
-        'type' => $type,
+        'type' => $acctType,
         'date' => time(),
-        'transactions' => array($transactions),
+        'ceiling' => $ceiling,
+        'transactions' => array(),
     );
+        
+
+
+    if($balance > 0) {
+        $accountArry['transactions'] [] = array('date' => time(), 'type' => 'deposit', 'amount' => $balance,);
+    }
+    return $accountArry;
 }
+
+$newAcct = createAccount(500, 'Lila', 'current', 1000);
+print_r($newAcct);
+
+
+function addDeposit(float $amount, array &$transactions, float &$balance): array {
+    $deposit = array('date' => time(), 'type' => 'deposit', 'amount' => $amount);
+    $transactions[] = $deposit;
+    $balance = $amount + $balance;
+    echo "balance <3: $balance\n";
+    return $deposit;
+}
+$deposit = addDeposit(550, $newAcct['transactions'], $newAcct['balance']);
+
+echo gettype($deposit);
+print_r($newAcct);
+
