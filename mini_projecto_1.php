@@ -55,7 +55,6 @@
 
 function createAccount(float $ceiling, string $holder, string $acctType,float $balance = 0.0): array {
     $accountArry = array(
-    
         'balance' => $balance,
         'holder' => $holder,
         'type' => $acctType,
@@ -63,8 +62,6 @@ function createAccount(float $ceiling, string $holder, string $acctType,float $b
         'ceiling' => $ceiling,
         'transactions' => array(),
     );
-        
-
 
     if($balance > 0) {
         $accountArry['transactions'] [] = array('date' => time(), 'type' => 'deposit', 'amount' => $balance,);
@@ -76,15 +73,60 @@ $newAcct = createAccount(500, 'Lila', 'current', 1000);
 print_r($newAcct);
 
 
-function addDeposit(float $amount, array &$transactions, float &$balance): array {
+function addDeposit(float $amount, array &$transactions, float &$balance): void {
     $deposit = array('date' => time(), 'type' => 'deposit', 'amount' => $amount);
     $transactions[] = $deposit;
     $balance = $amount + $balance;
     echo "balance <3: $balance\n";
-    return $deposit;
 }
 $deposit = addDeposit(550, $newAcct['transactions'], $newAcct['balance']);
 
 echo gettype($deposit);
 print_r($newAcct);
 
+function withdraw(float $ceiling, float &$balance, float $amount, array &$transactions) { 
+    $newBalance = $balance - $amount;
+
+    if ($newBalance < $ceiling) {
+        echo "Withdrawal declined: insufficient funds";
+        return;
+    }
+
+    $withdraw = array('date'=> time(), 'type' => 'withdraw', 'amount' => $amount);
+    $transactions[] = $withdraw;
+    $balance = $balance + $amount;
+}
+
+withdraw($newAcct['ceiling'], $newAcct['balance'], 430.0, $newAcct['transactions']);
+print_r($newAcct); 
+
+function balanceOnDate(string $date, array &$transactions): void {
+    $filterDateUnix = strtotime($date);
+    echo "DATE: $filterDateUnix\n";
+
+    // $filterDateUnix = time() + 100000;
+
+    $balancaAccumulator = 0;
+
+    foreach ($transactions as $transaction) {
+        if ($transaction['date'] > $filterDateUnix) {
+            break;
+        }
+
+        if ($transaction['type'] === 'deposit') {
+            $balancaAccumulator = $balancaAccumulator + $transaction['amount'];
+        } elseif ($transaction['type'] === 'withdraw') {
+            $balancaAccumulator = $balancaAccumulator - $transaction['amount'];
+        }
+    }
+
+    echo "The balance on $date was $balancaAccumulator\n";
+}
+
+balanceOnDate('October 11, 2023', $newAcct['transactions']);
+
+
+
+
+// // Extrato de conta
+// Date     Transaction     Amount     Balance
