@@ -74,11 +74,13 @@ print_r($newAcct);
 
 
 function addDeposit(float $amount, array &$transactions, float &$balance): void {
-    $deposit = array('date' => time(), 'type' => 'deposit', 'amount' => $amount);
+    $timeDeposit = time();
+    $deposit = array('date' => $timeDeposit, 'type' => 'deposit', 'amount' => $amount);
     $transactions[] = $deposit;
     $balance = $amount + $balance;
     echo "balance <3: $balance\n";
 }
+
 $deposit = addDeposit(550, $newAcct['transactions'], $newAcct['balance']);
 
 echo gettype($deposit);
@@ -88,7 +90,7 @@ function withdraw(float $ceiling, float &$balance, float $amount, array &$transa
     $newBalance = $balance - $amount;
 
     if ($newBalance < $ceiling) {
-        echo "Withdrawal declined: insufficient funds";
+        echo "Withdrawal declined: insufficient funds\n";
         return;
     }
 
@@ -98,32 +100,41 @@ function withdraw(float $ceiling, float &$balance, float $amount, array &$transa
 }
 
 withdraw($newAcct['ceiling'], $newAcct['balance'], 430.0, $newAcct['transactions']);
+// Declined due to insufficient funds
+withdraw($newAcct['ceiling'], $newAcct['balance'], 5000.0, $newAcct['transactions']);
 print_r($newAcct); 
 
-function balanceOnDate(string $date, array &$transactions): void {
+function balanceOnDate(string $date, int $acctCreationDate, array &$transactions): void {
+    $balanceAccumulator = 0;
     $filterDateUnix = strtotime($date);
-    echo "DATE: $filterDateUnix\n";
 
-    // $filterDateUnix = time() + 100000;
-
-    $balancaAccumulator = 0;
+    if ($filterDateUnix < $acctCreationDate) {
+        echo "Balance not found. Date ($date) precedes account creation.\n";
+        return;
+    }
 
     foreach ($transactions as $transaction) {
-        if ($transaction['date'] > $filterDateUnix) {
+        $transactionDateString = date('M-D-Y', $transaction['date']);
+        $transactionDateUnixWithoutTime = strtotime($transactionDateString);
+
+        if ($transactionDateUnixWithoutTime > $filterDateUnix) {
             break;
         }
 
         if ($transaction['type'] === 'deposit') {
-            $balancaAccumulator = $balancaAccumulator + $transaction['amount'];
+            $balanceAccumulator = $balanceAccumulator + $transaction['amount'];
         } elseif ($transaction['type'] === 'withdraw') {
-            $balancaAccumulator = $balancaAccumulator - $transaction['amount'];
+            $balanceAccumulator = $balanceAccumulator - $transaction['amount'];
         }
     }
 
-    echo "The balance on $date was $balancaAccumulator\n";
+    echo "The balance on $date was $balanceAccumulator\n";
 }
 
-balanceOnDate('October 11, 2023', $newAcct['transactions']);
+// Output = 1120
+balanceOnDate(date('ymd', time()), $newAcct['date'], $newAcct['transactions']);
+// Output = Balance not found. Date (October 10, 2013) precedes account creation.
+balanceOnDate('October 10, 2013', $newAcct['date'], $newAcct['transactions']);
 
 
 
