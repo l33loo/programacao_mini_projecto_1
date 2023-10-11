@@ -55,18 +55,19 @@
 
 function createAccount(float $ceiling, string $holder, string $acctType,float $balance = 0.0): array {
     $absBalance = abs($balance);
+    $creationDate = time();
     $accountArry = array(
         'balance' => $absBalance,
         'holder' => $holder,
         'type' => $acctType,
-        'date' => time(),
+        'date' => $creationDate,
         'ceiling' => $ceiling,
         'transactions' => array(),
     );
 
     if($absBalance > 0) {
         $accountArray['transactions'][] = array(
-            'date' => time(),
+            'date' => $creationDate,
             'type' => 'deposit',
             'amount' => $absBalance,
         );
