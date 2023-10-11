@@ -186,7 +186,7 @@ function acctStatement(array $account, string $startDate, string $endDate): void
         $startDateUnix = strtotime($startDate);
         $endDateUnix = strtotime($endDate);
         echo "END DATE <3: $endDateUnix\nTRANSACTION DATE: $date\n";
-        if($dateWithoutTime >= $startDateUnix && $date <= ($endDateUnix + 3600 * 24)) { 
+        if($dateWithoutTime >= $startDateUnix && $dateWithoutTime <= ($endDateUnix + 3600 * 24 - 1)) {
             // Put full date and time for statement "2023-10-09, 8:59:40"
             $dateStr = date('m-d-Y', $date);
             
