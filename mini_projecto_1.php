@@ -168,7 +168,7 @@ function acctStatement(array $account, string $startDate, string $endDate): void
     $holder = $account['holder'];
     $type = $account['type'];
     $transactions = $account['transactions'];
-    $statement = "Holder: $holder\nType: $type\nTransactions:\n\tDATE\t\tTRANSACTION\tAMOUNT\tBALANCE\n";
+    $statement = "Holder: $holder\nType: $type\nTransactions:\n\tDATE\t\t\tTRANSACTION\tAMOUNT\tBALANCE\n";
     $balance = 0;
     
     for($i = 0; $i < count($transactions); $i++){
@@ -188,9 +188,12 @@ function acctStatement(array $account, string $startDate, string $endDate): void
         echo "END DATE <3: $endDateUnix\nTRANSACTION DATE: $date\n";
         if($dateWithoutTime >= $startDateUnix && $dateWithoutTime <= ($endDateUnix + 3600 * 24 - 1)) {
             // Put full date and time for statement "2023-10-09, 8:59:40"
-            $dateStr = date('m-d-Y', $date);
-            
-            $transString = ($i + 1) . ".\t$dateStr\t$type\t$amount\t$balance\n";
+            $dateStr = date('Y-m-d, G:i:s', $date);
+            $tab = "\t";
+            if ($type === Transaction::Deposit->value) {
+                $tab .= "\t";
+            }
+            $transString = ($i + 1) . ".\t$dateStr\t$type$tab$amount\t$balance\n";
             $statement = $statement . $transString;
         }
     }
