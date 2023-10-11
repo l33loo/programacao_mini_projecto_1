@@ -146,7 +146,7 @@ balanceOnDate('October 10, 2013', $newAcct['date'], $newAcct['transactions']);
 // ...
 
 
-function acctStatement(array $account): void {
+function acctStatement(array $account, string $startDate, string $endDate): void {
     $holder = $account['holder'];
     $type = $account['type'];
     $transactions = $account['transactions'];
@@ -155,23 +155,31 @@ function acctStatement(array $account): void {
     
     for($i = 0; $i < count($transactions); $i++){
         $transaction = $transactions[$i];
-        $date = $transaction['date'];
-        // Put full date and time for statement "2023-10-09, 8:59:40"
-        $dateStr = date('m-d-Y', $date);
         $type = $transaction['type'];
         $amount = $transaction ['amount'];
-
         if ($type === 'deposit') {
             $balance += $amount;
         } elseif ($type === 'withdraw') {
             $balance -= $amount;
         }
-
-        $transString = ($i + 1) . ".\t$dateStr\t$type\t$amount\t$balance\n";
-        $statement = $statement . $transString;
+        $date = $transaction['date'];
+        $dateString = date('ymd', $date);
+        $dateWithoutTime = strtotime($dateString);
+        $startDateUnix = strtotime($startDate);
+        $endDateUnix = strtotime($endDate);
+        echo "END DATE <3: $endDateUnix\nTRANSACTION DATE: $date\n";
+        if($dateWithoutTime >= $startDateUnix && $date <= ($endDateUnix + 3600 * 24)) { 
+            // Put full date and time for statement "2023-10-09, 8:59:40"
+            $dateStr = date('m-d-Y', $date);
+            
+            $transString = ($i + 1) . ".\t$dateStr\t$type\t$amount\t$balance\n";
+            $statement = $statement . $transString;
+        }
     }
 
     echo $statement;
 }
 
-acctStatement($newAcct);
+acctStatement($newAcct, "October 11, 2013", "October 11, 2023");
+
+
