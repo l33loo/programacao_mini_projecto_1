@@ -138,6 +138,31 @@ balanceOnDate('October 10, 2013', $newAcct['date'], $newAcct['transactions']);
 
 
 
-
 // // Extrato de conta
+// Holder:
+// Type
+// Transactions:
 // Date     Transaction     Amount     Balance
+// ...
+
+
+function acctStatement(array $account): void {
+    $holder = $account['holder'];
+    $type = $account['type'];
+    $transactions = $account['transactions'];
+    $statement = "Holder: $holder\nType: $type\nTransactions:\n\tDATE\t\tTRANSACTION\tAMOUNT\tBALANCE\n";
+    
+    for($i = 0; $i < count($transactions); $i++){
+        $transaction = $transactions[$i];
+        $date = $transaction['date'];
+        $type = $transaction['type'];
+        $amount = $transaction ['amount'];
+
+        $transString = ($i + 1) . ".\t$date\t$type\t$amount\n";
+        $statement = $statement . $transString;
+    }
+
+    echo $statement;
+}
+
+acctStatement($newAcct);
