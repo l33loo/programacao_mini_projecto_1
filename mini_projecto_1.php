@@ -65,9 +65,13 @@ function createAccount(float $ceiling, string $holder, string $acctType,float $b
     );
 
     if($absBalance > 0) {
-        $accountArry['transactions'] [] = array('date' => time(), 'type' => 'deposit', 'amount' => $absBalance,);
+        $accountArray['transactions'][] = array(
+            'date' => time(),
+            'type' => 'deposit',
+            'amount' => $absBalance,
+        );
     }
-    return $accountArry;
+    return $accountArray;
 }
 
 $newAcct = createAccount(500, 'Lila', 'current', 1000);
@@ -77,7 +81,11 @@ print_r($newAcct);
 function addDeposit(float $amount, array &$transactions, float &$balance): void {
     $absAmount = abs($amount);
     $timeDeposit = time();
-    $deposit = array('date' => $timeDeposit, 'type' => 'deposit', 'amount' => $absAmount);
+    $deposit = array(
+        'date' => $timeDeposit,
+        'type' => 'deposit',
+        'amount' => $absAmount,
+    );
     $transactions[] = $deposit;
     $balance = $absAmount + $balance;
     echo "balance <3: $balance\n";
@@ -94,7 +102,11 @@ function withdraw(float $ceiling, float &$balance, float $amount, array &$transa
         return;
     }
 
-    $withdraw = array('date'=> time(), 'type' => 'withdraw', 'amount' => $absAmount);
+    $withdraw = array(
+        'date'=> time(),
+        'type' => 'withdraw',
+        'amount' => $absAmount,
+    );
     $transactions[] = $withdraw;
     $balance = $newBalance;
 }
