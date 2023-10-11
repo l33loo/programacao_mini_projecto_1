@@ -53,29 +53,38 @@
 // - devolver o saldo numa determinada data
 // - extracto de conta
 
-function createAccount(float $ceiling, string $holder, string $acctType,float $balance = 0.0): array {
+enum Account: string {
+    case Current = 'current';
+    case Savings = 'savings';
+}
+
+enum Transaction: string {
+    case Deposit = 'deposit';
+    case Withdrawal = 'withdrawal';
+}
+
+function createAccount(float $ceiling, string $holder, Account $acctType,float $balance = 0.0): array {
     $absBalance = abs($balance);
     $creationDate = time();
-    $accountArry = array(
+    $accountArray = array(
         'balance' => $absBalance,
         'holder' => $holder,
-        'type' => $acctType,
+        'type' => $acctType->value,
         'date' => $creationDate,
         'ceiling' => $ceiling,
-        'transactions' => array(),
     );
 
     if($absBalance > 0) {
         $accountArray['transactions'][] = array(
             'date' => $creationDate,
-            'type' => 'deposit',
+            'type' => Transaction::Deposit->value,
             'amount' => $absBalance,
         );
     }
     return $accountArray;
 }
 
-$newAcct = createAccount(500, 'Lila', 'current', 1000);
+$newAcct = createAccount(500, 'Lila', Account::Current, 1000);
 print_r($newAcct);
 
 
@@ -84,7 +93,7 @@ function addDeposit(float $amount, array &$transactions, float &$balance): void 
     $timeDeposit = time();
     $deposit = array(
         'date' => $timeDeposit,
-        'type' => 'deposit',
+        'type' => Transaction::Deposit->value,
         'amount' => $absAmount,
     );
     $transactions[] = $deposit;
@@ -92,6 +101,7 @@ function addDeposit(float $amount, array &$transactions, float &$balance): void 
     echo "balance <3: $balance\n";
 }
 
+addDeposit(550, $newAcct['transactions'], $newAcct['balance']);
 print_r($newAcct);
 
 function withdraw(float $ceiling, float &$balance, float $amount, array &$transactions) {
@@ -103,12 +113,12 @@ function withdraw(float $ceiling, float &$balance, float $amount, array &$transa
         return;
     }
 
-    $withdraw = array(
+    $withdrawal = array(
         'date'=> time(),
-        'type' => 'withdraw',
+        'type' => Transaction::Withdrawal->value,
         'amount' => $absAmount,
     );
-    $transactions[] = $withdraw;
+    $transactions[] = $withdrawal;
     $balance = $newBalance;
 }
 
@@ -135,9 +145,9 @@ function balanceOnDate(string $date, int $acctCreationDate, array &$transactions
             break;
         }
 
-        if ($transaction['type'] === 'deposit') {
+        if ($transaction['type'] === Transaction::Deposit->value) {
             $balanceAccumulator = $balanceAccumulator + $transaction['amount'];
-        } elseif ($transaction['type'] === 'withdraw') {
+        } elseif ($transaction['type'] === Transaction::Withdrawal->value) {
             $balanceAccumulator = $balanceAccumulator - $transaction['amount'];
         }
     }
@@ -161,9 +171,9 @@ function acctStatement(array $account, string $startDate, string $endDate): void
         $transaction = $transactions[$i];
         $type = $transaction['type'];
         $amount = $transaction ['amount'];
-        if ($type === 'deposit') {
+        if ($type === Transaction::Deposit->value) {
             $balance += $amount;
-        } elseif ($type === 'withdraw') {
+        } elseif ($type === Transaction::Withdrawal->value) {
             $balance -= $amount;
         }
         $date = $transaction['date'];
@@ -185,5 +195,3 @@ function acctStatement(array $account, string $startDate, string $endDate): void
 }
 
 acctStatement($newAcct, "October 11, 2013", "October 11, 2023");
-
-
