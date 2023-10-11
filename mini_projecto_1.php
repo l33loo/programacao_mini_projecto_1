@@ -63,7 +63,11 @@ enum Transaction: string {
     case Withdrawal = 'withdrawal';
 }
 
-function createAccount(float $ceiling, string $holder, Account $acctType,float $balance = 0.0): array {
+function createAccount(float $ceiling, string $holder, Account $acctType, float $balance = 0.0): array {
+    $ceil = 0;
+    if ($acctType === Account::Current && $ceiling !== 0) {
+        $ceil = abs($ceiling);
+    }
     $absBalance = abs($balance);
     $creationDate = time();
     $accountArray = array(
@@ -108,7 +112,7 @@ function withdraw(float $ceiling, float &$balance, float $amount, array &$transa
     $absAmount = abs($amount);
     $newBalance = $balance - $absAmount;
 
-    if ($newBalance < $ceiling) {
+    if ($newBalance < -$ceiling) {
         echo "Withdrawal declined: insufficient funds\n";
         return;
     }
