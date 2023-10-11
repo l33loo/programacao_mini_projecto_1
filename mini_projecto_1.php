@@ -156,6 +156,7 @@ function acctStatement(array $account): void {
     for($i = 0; $i < count($transactions); $i++){
         $transaction = $transactions[$i];
         $date = $transaction['date'];
+        // Put full date and time for statement "2023-10-09, 8:59:40"
         $dateStr = date('m-d-Y', $date);
         $type = $transaction['type'];
         $amount = $transaction ['amount'];
