@@ -54,8 +54,9 @@
 // - extracto de conta
 
 function createAccount(float $ceiling, string $holder, string $acctType,float $balance = 0.0): array {
+    $absBalance = abs($balance);
     $accountArry = array(
-        'balance' => $balance,
+        'balance' => $absBalance,
         'holder' => $holder,
         'type' => $acctType,
         'date' => time(),
@@ -63,8 +64,8 @@ function createAccount(float $ceiling, string $holder, string $acctType,float $b
         'transactions' => array(),
     );
 
-    if($balance > 0) {
-        $accountArry['transactions'] [] = array('date' => time(), 'type' => 'deposit', 'amount' => $balance,);
+    if($absBalance > 0) {
+        $accountArry['transactions'] [] = array('date' => time(), 'type' => 'deposit', 'amount' => $absBalance,);
     }
     return $accountArry;
 }
@@ -74,32 +75,32 @@ print_r($newAcct);
 
 
 function addDeposit(float $amount, array &$transactions, float &$balance): void {
+    $absAmount = abs($amount);
     $timeDeposit = time();
-    $deposit = array('date' => $timeDeposit, 'type' => 'deposit', 'amount' => $amount);
+    $deposit = array('date' => $timeDeposit, 'type' => 'deposit', 'amount' => $absAmount);
     $transactions[] = $deposit;
-    $balance = $amount + $balance;
+    $balance = $absAmount + $balance;
     echo "balance <3: $balance\n";
 }
 
-$deposit = addDeposit(550, $newAcct['transactions'], $newAcct['balance']);
-
-echo gettype($deposit);
 print_r($newAcct);
 
-function withdraw(float $ceiling, float &$balance, float $amount, array &$transactions) { 
-    $newBalance = $balance - $amount;
+function withdraw(float $ceiling, float &$balance, float $amount, array &$transactions) {
+    $absAmount = abs($amount);
+    $newBalance = $balance - $absAmount;
 
     if ($newBalance < $ceiling) {
         echo "Withdrawal declined: insufficient funds\n";
         return;
     }
 
-    $withdraw = array('date'=> time(), 'type' => 'withdraw', 'amount' => $amount);
+    $withdraw = array('date'=> time(), 'type' => 'withdraw', 'amount' => $absAmount);
     $transactions[] = $withdraw;
-    $balance = $balance + $amount;
+    $balance = $newBalance;
 }
 
 withdraw($newAcct['ceiling'], $newAcct['balance'], 430.0, $newAcct['transactions']);
+print_r($newAcct);
 // Declined due to insufficient funds
 withdraw($newAcct['ceiling'], $newAcct['balance'], 5000.0, $newAcct['transactions']);
 print_r($newAcct); 
@@ -135,16 +136,6 @@ function balanceOnDate(string $date, int $acctCreationDate, array &$transactions
 balanceOnDate(date('ymd', time()), $newAcct['date'], $newAcct['transactions']);
 // Output = Balance not found. Date (October 10, 2013) precedes account creation.
 balanceOnDate('October 10, 2013', $newAcct['date'], $newAcct['transactions']);
-
-
-
-// // Extrato de conta
-// Holder:
-// Type
-// Transactions:
-// Date     Transaction     Amount     Balance
-// ...
-
 
 function acctStatement(array $account, string $startDate, string $endDate): void {
     $holder = $account['holder'];
