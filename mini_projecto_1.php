@@ -31,28 +31,6 @@
 // Fazer o extracto de conta
 // Deve apresentar uma listagem com todos os movimentos entre um intervalo de datas, ordenados por data e apresentar o montante, tipo, data, e saldo acumulado
 
-
-//////////////////////////////////////////////////////////////////
-
-// Array:
-//     (float) Saldo
-//     (string) Titular
-//     (string) Tipo
-//     (data - int -> strtotime) Data de Abertura
-//     Array: Lista de Movimentos
-//          (data - int -> strtotime) Data de Movimento
-//          (string) Tipo de Movimento
-//          (float) Montante
-//     (float) Plafond
-
-
-// funcoes:
-// - (criar uma conta)
-// - deposito
-// - levantamento
-// - devolver o saldo numa determinada data
-// - extracto de conta
-
 enum Account: string {
     case Current = 'current';
     case Savings = 'savings';
