@@ -145,9 +145,9 @@ function balanceOnDate(array $account, string $date): void {
         }
 
         if ($transaction['type'] === Transaction::Deposit->value) {
-            $balanceAccumulator = $balanceAccumulator + $transaction['amount'];
+            $balanceAccumulator += $transaction['amount'];
         } elseif ($transaction['type'] === Transaction::Withdrawal->value) {
-            $balanceAccumulator = $balanceAccumulator - $transaction['amount'];
+            $balanceAccumulator -= $transaction['amount'];
         }
     }
 
@@ -175,14 +175,14 @@ function acctStatement(array $account, string $startDate, string $endDate): void
         $startDateUnix = strtotime($startDate);
         $endDateUnix = strtotime($endDate);
 
-        if($dateWithoutTime >= $startDateUnix && $dateWithoutTime <= ($endDateUnix + 3600 * 24 - 1)) {
+        if($dateWithoutTime >= $startDateUnix && $dateWithoutTime <= ($endDateUnix + 3600 * 24 - 1 /*round to end of day*/)) {
             $dateStr = date('Y-m-d, G:i:s', $date);
             $tab = "\t";
             if ($type === Transaction::Deposit->value) {
                 $tab .= "\t";
             }
             $transString = ($i + 1) . ".\t$dateStr\t$type$tab$amount\t$balance\n";
-            $statement = $statement . $transString;
+            $statement .= $transString;
         }
     }
 
