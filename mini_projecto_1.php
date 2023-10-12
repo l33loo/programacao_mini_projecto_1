@@ -102,7 +102,10 @@ function addDeposit(float $amount, array &$transactions, float &$balance): void 
     echo "balance <3: $balance\n";
 }
 
-function withdraw(float $ceiling, float &$balance, float $amount, array &$transactions) {
+function withdraw(array &$account, float $amount) {
+    $ceiling = $account['ceiling'];
+    $balance = &$account['balance'];
+    $transactions = &$account['transactions'];
     $absAmount = abs($amount);
     $newBalance = $balance - $absAmount;
 
@@ -197,12 +200,11 @@ print_r($newCurrentAcct);
 addDeposit(550, $newCurrentAcct['transactions'], $newCurrentAcct['balance']);
 print_r($newCurrentAcct);
 
-withdraw($newCurrentAcct['ceiling'], $newCurrentAcct['balance'], 430.0, $newCurrentAcct['transactions']);
+withdraw($newCurrentAcct, 430.0);
 print_r($newCurrentAcct);
-withdraw($newCurrentAcct['ceiling'], $newCurrentAcct['balance'], 1620.0, $newCurrentAcct['transactions']);
-print_r($newCurrentAcct);
+withdraw($newCurrentAcct, 1620.0);
 // Declined due to insufficient funds
-withdraw($newCurrentAcct['ceiling'], $newCurrentAcct['balance'], 1.0, $newCurrentAcct['transactions']);
+withdraw($newCurrentAcct, 1.0);
 print_r($newCurrentAcct);
 
 // Output = -500
@@ -222,5 +224,5 @@ acctStatement($newCurrentAcct, date("Y-m-d", time()), date("Y-m-d", time() + 24 
 $newSavingsAcct = createAccount(500, 'Lila', Account::Savings);
 print_r($newSavingsAcct);
 
-withdraw($newSavingsAcct['ceiling'], $newSavingsAcct['balance'], 1.0, $newSavingsAcct['transactions']);
+withdraw($newSavingsAcct, 1.0);
 print_r($newSavingsAcct);
