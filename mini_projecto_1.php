@@ -101,7 +101,6 @@ function addDeposit(array &$account, float $amount): void {
     );
     $transactions[] = $deposit;
     $balance = $absAmount + $balance;
-    echo "balance <3: $balance\n";
 }
 
 function withdraw(array &$account, float $amount) {
