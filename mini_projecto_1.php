@@ -47,7 +47,7 @@
 
 
 // funcoes:
-// - criar uma conta
+// - (criar uma conta)
 // - deposito
 // - levantamento
 // - devolver o saldo numa determinada data
@@ -88,10 +88,6 @@ function createAccount(float $ceiling, string $holder, Account $acctType, float 
     return $accountArray;
 }
 
-$newAcct = createAccount(500, 'Lila', Account::Current, 1000);
-print_r($newAcct);
-
-
 function addDeposit(float $amount, array &$transactions, float &$balance): void {
     $absAmount = abs($amount);
     $timeDeposit = time();
@@ -105,15 +101,12 @@ function addDeposit(float $amount, array &$transactions, float &$balance): void 
     echo "balance <3: $balance\n";
 }
 
-addDeposit(550, $newAcct['transactions'], $newAcct['balance']);
-print_r($newAcct);
-
 function withdraw(float $ceiling, float &$balance, float $amount, array &$transactions) {
     $absAmount = abs($amount);
     $newBalance = $balance - $absAmount;
 
     if ($newBalance < -$ceiling) {
-        echo "Withdrawal declined: insufficient funds\n";
+        echo "Withdrawal of $absAmount declined: insufficient funds\n";
         return;
     }
 
@@ -125,12 +118,6 @@ function withdraw(float $ceiling, float &$balance, float $amount, array &$transa
     $transactions[] = $withdrawal;
     $balance = $newBalance;
 }
-
-withdraw($newAcct['ceiling'], $newAcct['balance'], 430.0, $newAcct['transactions']);
-print_r($newAcct);
-// Declined due to insufficient funds
-withdraw($newAcct['ceiling'], $newAcct['balance'], 5000.0, $newAcct['transactions']);
-print_r($newAcct); 
 
 function balanceOnDate(string $date, int $acctCreationDate, array &$transactions): void {
     $balanceAccumulator = 0;
@@ -158,11 +145,6 @@ function balanceOnDate(string $date, int $acctCreationDate, array &$transactions
 
     echo "The balance on $date was $balanceAccumulator\n";
 }
-
-// Output = 1120
-balanceOnDate(date('ymd', time()), $newAcct['date'], $newAcct['transactions']);
-// Output = Balance not found. Date (October 10, 2013) precedes account creation.
-balanceOnDate('October 10, 2013', $newAcct['date'], $newAcct['transactions']);
 
 function acctStatement(array $account, string $startDate, string $endDate): void {
     $holder = $account['holder'];
@@ -200,5 +182,22 @@ function acctStatement(array $account, string $startDate, string $endDate): void
 
     echo $statement;
 }
+
+$newAcct = createAccount(500, 'Lila', Account::Current, 1000);
+print_r($newAcct);
+
+addDeposit(550, $newAcct['transactions'], $newAcct['balance']);
+print_r($newAcct);
+
+withdraw($newAcct['ceiling'], $newAcct['balance'], 430.0, $newAcct['transactions']);
+print_r($newAcct);
+// Declined due to insufficient funds
+withdraw($newAcct['ceiling'], $newAcct['balance'], 1621.0, $newAcct['transactions']);
+print_r($newAcct);
+
+// Output = 1120
+balanceOnDate(date('ymd', time()), $newAcct['date'], $newAcct['transactions']);
+// Output = Balance not found. Date (October 10, 2013) precedes account creation.
+balanceOnDate('October 10, 2013', $newAcct['date'], $newAcct['transactions']);
 
 acctStatement($newAcct, "October 11, 2013", "October 11, 2023");
