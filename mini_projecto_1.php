@@ -228,5 +228,6 @@ acctStatement($newCurrentAcct, date("Y-m-d", time() - 24 * 3600), date("Y-m-d", 
 $newSavingsAcct = createAccount(500, 'Lila', Account::Savings);
 print_r($newSavingsAcct);
 
+// Declined due to insufficient funds
 withdraw($newSavingsAcct, 1.0);
 print_r($newSavingsAcct);
