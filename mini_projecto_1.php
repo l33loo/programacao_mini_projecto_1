@@ -130,8 +130,7 @@ function balanceOnDate(array $account, string $date): void {
     $transactions = &$account['transactions'];
     $balanceAccumulator = 0;
     $filterDateUnix = strtotime($date);
-    $acctDateStr = date("Y-m-d", $acctCreationDate);
-    $acctDateWithoutTime = strtotime($acctDateStr);
+    $acctDateWithoutTime = removeTimeFromDate($acctCreationDate);
     echo "DATE: $filterDateUnix, ACCNT CREATION DATE: $acctCreationDate\n";
     if ($filterDateUnix < $acctDateWithoutTime) {
         echo "Balance not found. Date ($date) precedes account creation.\n";
@@ -178,7 +177,6 @@ function acctStatement(array $account, string $startDate, string $endDate): void
         $endDateUnix = strtotime($endDate);
 
         if($dateWithoutTime >= $startDateUnix && $dateWithoutTime <= ($endDateUnix + 3600 * 24 - 1)) {
-            // Put full date and time for statement "2023-10-09, 8:59:40"
             $dateStr = date('Y-m-d, G:i:s', $date);
             $tab = "\t";
             if ($type === Transaction::Deposit->value) {
@@ -216,6 +214,7 @@ balanceOnDate($newCurrentAcct, date('Y-m-d', time()));
 // Output = Balance not found. Date (October 10, 2013) precedes account creation.
 balanceOnDate($newCurrentAcct, 'October 10, 2013');
 
+//// Output =
 // Holder: Lila
 // Type: current
 // Transactions:
