@@ -76,6 +76,7 @@ function createAccount(float $ceiling, string $holder, Account $acctType, float 
         'type' => $acctType->value,
         'date' => $creationDate,
         'ceiling' => $ceiling,
+        'transactions' => array(),
     );
 
     if($absBalance > 0) {
@@ -122,8 +123,10 @@ function withdraw(float $ceiling, float &$balance, float $amount, array &$transa
 function balanceOnDate(string $date, int $acctCreationDate, array &$transactions): void {
     $balanceAccumulator = 0;
     $filterDateUnix = strtotime($date);
-
-    if ($filterDateUnix < $acctCreationDate) {
+    $acctDateStr = date("Y-m-d", $acctCreationDate);
+    $acctDateWithoutTime = strtotime($acctDateStr);
+    echo "DATE: $filterDateUnix, ACCNT CREATION DATE: $acctCreationDate\n";
+    if ($filterDateUnix < $acctDateWithoutTime) {
         echo "Balance not found. Date ($date) precedes account creation.\n";
         return;
     }
@@ -163,11 +166,10 @@ function acctStatement(array $account, string $startDate, string $endDate): void
             $balance -= $amount;
         }
         $date = $transaction['date'];
-        $dateString = date('ymd', $date);
-        $dateWithoutTime = strtotime($dateString);
+        $dateWithoutTime = removeTimeFromDate($date);
         $startDateUnix = strtotime($startDate);
         $endDateUnix = strtotime($endDate);
-        
+
         if($dateWithoutTime >= $startDateUnix && $dateWithoutTime <= ($endDateUnix + 3600 * 24 - 1)) {
             // Put full date and time for statement "2023-10-09, 8:59:40"
             $dateStr = date('Y-m-d, G:i:s', $date);
@@ -183,22 +185,30 @@ function acctStatement(array $account, string $startDate, string $endDate): void
     echo $statement;
 }
 
-$newAcct = createAccount(500, 'Lila', Account::Current, 1000);
-print_r($newAcct);
+function removeTimeFromDate(int $timestamp): int {
+    $dateWithoutTime = date("Y-m-d", $timestamp);
+    $timestampWithoutTime = strtotime($dateWithoutTime);
+    return $timestampWithoutTime;
+}
 
-addDeposit(550, $newAcct['transactions'], $newAcct['balance']);
-print_r($newAcct);
+$newCurrentAcct = createAccount(500, 'Lila', Account::Current, 1000);
+print_r($newCurrentAcct);
 
-withdraw($newAcct['ceiling'], $newAcct['balance'], 430.0, $newAcct['transactions']);
-print_r($newAcct);
+addDeposit(550, $newCurrentAcct['transactions'], $newCurrentAcct['balance']);
+print_r($newCurrentAcct);
+
+withdraw($newCurrentAcct['ceiling'], $newCurrentAcct['balance'], 430.0, $newCurrentAcct['transactions']);
+print_r($newCurrentAcct);
+withdraw($newCurrentAcct['ceiling'], $newCurrentAcct['balance'], 1620.0, $newCurrentAcct['transactions']);
+print_r($newCurrentAcct);
 // Declined due to insufficient funds
-withdraw($newAcct['ceiling'], $newAcct['balance'], 1621.0, $newAcct['transactions']);
-print_r($newAcct);
+withdraw($newCurrentAcct['ceiling'], $newCurrentAcct['balance'], 1.0, $newCurrentAcct['transactions']);
+print_r($newCurrentAcct);
 
-// Output = 1120
-balanceOnDate(date('Y-m-d', time()), $newAcct['date'], $newAcct['transactions']);
+// Output = -500
+balanceOnDate(date('Y-m-d', time()), $newCurrentAcct['date'], $newCurrentAcct['transactions']);
 // Output = Balance not found. Date (October 10, 2013) precedes account creation.
-balanceOnDate('October 10, 2013', $newAcct['date'], $newAcct['transactions']);
+balanceOnDate('October 10, 2013', $newCurrentAcct['date'], $newCurrentAcct['transactions']);
 
 // Holder: Lila
 // Type: current
@@ -207,4 +217,10 @@ balanceOnDate('October 10, 2013', $newAcct['date'], $newAcct['transactions']);
 // 1.      2023-10-12, 7:46:37     deposit         1000    1000
 // 2.      2023-10-12, 7:46:37     deposit         550     1550
 // 3.      2023-10-12, 7:46:37     withdrawal      430     1120
-acctStatement($newAcct, date("Y-m-d", time() - 24 * 3600), date("Y-m-d", time() + 24 * 3600));
+acctStatement($newCurrentAcct, date("Y-m-d", time()), date("Y-m-d", time() + 24 * 3600));
+
+$newSavingsAcct = createAccount(500, 'Lila', Account::Savings);
+print_r($newSavingsAcct);
+
+withdraw($newSavingsAcct['ceiling'], $newSavingsAcct['balance'], 1.0, $newSavingsAcct['transactions']);
+print_r($newSavingsAcct);
