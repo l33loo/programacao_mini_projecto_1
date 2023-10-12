@@ -75,7 +75,7 @@ function createAccount(float $ceiling, string $holder, Account $acctType, float 
         'holder' => $holder,
         'type' => $acctType->value,
         'date' => $creationDate,
-        'ceiling' => $ceiling,
+        'ceiling' => $ceil,
         'transactions' => array(),
     );
 
