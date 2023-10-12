@@ -131,7 +131,7 @@ function balanceOnDate(array $account, string $date): void {
     $balanceAccumulator = 0;
     $filterDateUnix = strtotime($date);
     $acctDateWithoutTime = removeTimeFromDate($acctCreationDate);
-    echo "DATE: $filterDateUnix, ACCNT CREATION DATE: $acctCreationDate\n";
+
     if ($filterDateUnix < $acctDateWithoutTime) {
         echo "Balance not found. Date ($date) precedes account creation.\n";
         return;
