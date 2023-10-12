@@ -125,7 +125,9 @@ function withdraw(array &$account, float $amount) {
     $balance = $newBalance;
 }
 
-function balanceOnDate(string $date, int $acctCreationDate, array &$transactions): void {
+function balanceOnDate(array $account, string $date): void {
+    $acctCreationDate = $account['date'];
+    $transactions = &$account['transactions'];
     $balanceAccumulator = 0;
     $filterDateUnix = strtotime($date);
     $acctDateStr = date("Y-m-d", $acctCreationDate);
@@ -210,17 +212,18 @@ withdraw($newCurrentAcct, 1.0);
 print_r($newCurrentAcct);
 
 // Output = -500
-balanceOnDate(date('Y-m-d', time()), $newCurrentAcct['date'], $newCurrentAcct['transactions']);
+balanceOnDate($newCurrentAcct, date('Y-m-d', time()));
 // Output = Balance not found. Date (October 10, 2013) precedes account creation.
-balanceOnDate('October 10, 2013', $newCurrentAcct['date'], $newCurrentAcct['transactions']);
+balanceOnDate($newCurrentAcct, 'October 10, 2013');
 
 // Holder: Lila
 // Type: current
 // Transactions:
 //         DATE                    TRANSACTION     AMOUNT  BALANCE
-// 1.      2023-10-12, 7:46:37     deposit         1000    1000
-// 2.      2023-10-12, 7:46:37     deposit         550     1550
-// 3.      2023-10-12, 7:46:37     withdrawal      430     1120
+// 1.      2023-10-12, 8:39:18     deposit         1000    1000
+// 2.      2023-10-12, 8:39:18     deposit         550     1550
+// 3.      2023-10-12, 8:39:18     withdrawal      430     1120
+// 4.      2023-10-12, 8:39:18     withdrawal      1620    -500
 acctStatement($newCurrentAcct, date("Y-m-d", time()), date("Y-m-d", time() + 24 * 3600));
 
 $newSavingsAcct = createAccount(500, 'Lila', Account::Savings);
