@@ -223,7 +223,7 @@ balanceOnDate($newCurrentAcct, 'October 10, 2013');
 // 2.      2023-10-12, 8:39:18     deposit         550     1550
 // 3.      2023-10-12, 8:39:18     withdrawal      430     1120
 // 4.      2023-10-12, 8:39:18     withdrawal      1620    -500
-acctStatement($newCurrentAcct, date("Y-m-d", time()), date("Y-m-d", time() + 24 * 3600));
+acctStatement($newCurrentAcct, date("Y-m-d", time() - 24 * 3600), date("Y-m-d", time() + 24 * 3600));
 
 $newSavingsAcct = createAccount(500, 'Lila', Account::Savings);
 print_r($newSavingsAcct);
