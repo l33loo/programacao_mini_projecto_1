@@ -167,7 +167,7 @@ function acctStatement(array $account, string $startDate, string $endDate): void
         $dateWithoutTime = strtotime($dateString);
         $startDateUnix = strtotime($startDate);
         $endDateUnix = strtotime($endDate);
-        echo "END DATE <3: $endDateUnix\nTRANSACTION DATE: $date\n";
+        
         if($dateWithoutTime >= $startDateUnix && $dateWithoutTime <= ($endDateUnix + 3600 * 24 - 1)) {
             // Put full date and time for statement "2023-10-09, 8:59:40"
             $dateStr = date('Y-m-d, G:i:s', $date);
@@ -196,8 +196,15 @@ withdraw($newAcct['ceiling'], $newAcct['balance'], 1621.0, $newAcct['transaction
 print_r($newAcct);
 
 // Output = 1120
-balanceOnDate(date('ymd', time()), $newAcct['date'], $newAcct['transactions']);
+balanceOnDate(date('Y-m-d', time()), $newAcct['date'], $newAcct['transactions']);
 // Output = Balance not found. Date (October 10, 2013) precedes account creation.
 balanceOnDate('October 10, 2013', $newAcct['date'], $newAcct['transactions']);
 
-acctStatement($newAcct, "October 11, 2013", "October 11, 2023");
+// Holder: Lila
+// Type: current
+// Transactions:
+//         DATE                    TRANSACTION     AMOUNT  BALANCE
+// 1.      2023-10-12, 7:46:37     deposit         1000    1000
+// 2.      2023-10-12, 7:46:37     deposit         550     1550
+// 3.      2023-10-12, 7:46:37     withdrawal      430     1120
+acctStatement($newAcct, date("Y-m-d", time() - 24 * 3600), date("Y-m-d", time() + 24 * 3600));
