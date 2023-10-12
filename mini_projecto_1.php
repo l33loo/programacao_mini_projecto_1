@@ -89,7 +89,9 @@ function createAccount(float $ceiling, string $holder, Account $acctType, float 
     return $accountArray;
 }
 
-function addDeposit(float $amount, array &$transactions, float &$balance): void {
+function addDeposit(array &$account, float $amount): void {
+    $transactions = &$account['transactions'];
+    $balance = &$account['balance'];
     $absAmount = abs($amount);
     $timeDeposit = time();
     $deposit = array(
@@ -197,7 +199,7 @@ function removeTimeFromDate(int $timestamp): int {
 $newCurrentAcct = createAccount(500, 'Lila', Account::Current, 1000);
 print_r($newCurrentAcct);
 
-addDeposit(550, $newCurrentAcct['transactions'], $newCurrentAcct['balance']);
+addDeposit($newCurrentAcct, 550);
 print_r($newCurrentAcct);
 
 withdraw($newCurrentAcct, 430.0);
